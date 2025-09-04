@@ -1,4 +1,4 @@
-name: 🔀 Sync from upstream
+name: Sync from upstream
 
 on:
   repository_dispatch:
@@ -24,6 +24,7 @@ jobs:
 
       - name: Add upstream remote
         run: |
+          # ← UPDATE for each fork: replace with your fork’s upstream URL
           git remote add upstream https://github.com/ORIGINAL-OWNER/ORIGINAL-REPO.git
 
       - name: Fetch & merge upstream
