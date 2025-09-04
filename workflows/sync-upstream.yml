@@ -1,0 +1,36 @@
+name: 🔀 Sync from upstream
+
+on:
+  repository_dispatch:
+    types: [upstream-sync]
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout default branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          fetch-depth: 0
+
+      - name: Configure Git for GitHub Actions
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Add upstream remote
+        run: |
+          git remote add upstream https://github.com/ORIGINAL-OWNER/ORIGINAL-REPO.git
+
+      - name: Fetch & merge upstream
+        run: |
+          git fetch upstream
+          git merge upstream/${{ github.event.repository.default_branch }} --no-edit
+
+      - name: Push merged changes
+        run: |
+          git push origin HEAD:${{ github.event.repository.default_branch }}
