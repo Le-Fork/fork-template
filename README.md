@@ -44,7 +44,9 @@ Manually trigger via Actions → Run workflow or set up a cron schedule in the d
 
 Permissions
 
-    The workflow requires contents: write to push merged changes back to the fork.
+    Your workflow needs contents: write to push changes. Under Settings → Actions → General, select Read and write permissions for workflows. 
+    
+    If it’s greyed out, ask an org admin to enable that setting so your sync can push updates.
 
 Tips
 
