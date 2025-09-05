@@ -27,9 +27,23 @@ This repository provides a reusable GitHub Actions workflow that keeps a fork’
    - The repository must be public.  
    - The workflow runs on your default branch (e.g., `main` or `master`).
 
+## Organization Actions Settings
+
+To allow this workflow to run, your organization’s Actions policy must permit the **actions/checkout@v4** action and first-party workflows:
+
+1. Go to **Organization Settings → Actions → General → Policies**.  
+2. Select **Allow Le-Fork, and select non-Le-Fork, actions and reusable workflows**.  
+   Note: you should change Le-Fork with your organization's name.
+3. Under **Allow actions created by GitHub**, ensure it is checked.  
+4. Under **Allow actions by Marketplace verified creators**, ensure it is checked.  
+5. In the **“Allow or block specified actions and reusable workflows”** textbox, list exactly:
+   ```
+   actions/checkout@v4
+   ```
+
 ## Triggering the Sync
 
-- **Scheduled sync**: The workflow’s cron schedule runs daily at 05:00 UTC by default.
+- **Scheduled sync**: The workflow’s cron schedule runs daily at 05:00 UTC by default.  
 - **Manual trigger**: Go to **Actions → Sync from upstream → Run workflow**.
 
 Example schedule in `sync-upstream.yml`:
@@ -43,15 +57,13 @@ on:
 ## Permissions
 
 Your workflow requires permission to push changes:
-
 ```yaml
 permissions:
   contents: write
 ```
-
-In **Settings → Actions → General**, ensure **Read and write permissions** is enabled. If it’s greyed out, ask an organization admin to grant write access.
+In **Settings → Actions → General**, ensure **Read and write permissions** is enabled. If it’s greyed out, ask an administrator to grant write access.
 
 ## Tips
 
 - Always keep the upstream URL in the workflow updated if you ever change the fork’s source.  
-- Use your organization’s central `.github` repository to manage any shared or dispatch workflows—individual forks only need the listener workflow once.
+- Each fork only needs this listener workflow; there’s no central dispatcher required unless you want to automate across multiple forks.
