@@ -1,37 +1,36 @@
-name: Sync from upstream
+name: 🔄 Sync from upstream
 
 on:
-  repository_dispatch:
-    types: [upstream-sync]
+  schedule:
+    - cron: '0 5 * * *'       # daily at 05:00 UTC
+  workflow_dispatch:         # manual trigger
+
+permissions:
+  contents: write             # allow pushing changes
 
 jobs:
   sync:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
     steps:
-      - name: Checkout default branch
+      - name: Check out repository
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.repository.default_branch }}
-          fetch-depth: 0
+          fetch-depth: 0       # full history
 
-      - name: Configure Git for GitHub Actions
+      - name: Configure Git
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Add upstream remote
+        # ← REPLACE `{ORIGINAL_OWNER}/{REPO_NAME}` with your fork’s upstream, e.g. “cncf/foundation”
         run: |
-          # ← UPDATE for each fork: replace with your fork’s upstream URL
-          git remote add upstream https://github.com/ORIGINAL-OWNER/ORIGINAL-REPO.git
+          git remote add upstream https://github.com/{ORIGINAL_OWNER}/{REPO_NAME}.git
 
       - name: Fetch & merge upstream
         run: |
           git fetch upstream
-          git merge upstream/${{ github.event.repository.default_branch }} --no-edit
+          git merge upstream/${{ github.ref_name }} --no-edit
 
       - name: Push merged changes
-        run: |
-          git push origin HEAD:${{ github.event.repository.default_branch }}
+        run: git push origin HEAD:${{ github.ref_name }}
