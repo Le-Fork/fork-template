@@ -1,55 +1,57 @@
 # fork-template
 
-This repository contains a reusable GitHub Actions workflow that keeps a fork’s default branch in sync with its upstream repository whenever a dispatch event is received.
-How It Works
+This repository provides a reusable GitHub Actions workflow that keeps a fork’s default branch in sync with its upstream repository on a schedule or manual trigger.
 
-    Dispatcher
-    A central dispatcher workflow (in your org’s .github repo) sends a repository_dispatch event of type upstream-sync to each fork.
+## How It Works
 
-    Listener (sync-upstream.yml)
-    This workflow listens for that event, checks out the fork’s default branch, merges the latest commits from the specified upstream, and pushes the result back to the fork.
+**Listener (sync-upstream.yml)**  
+- Runs on a cron schedule or when manually triggered.  
+- Checks out the fork’s default branch.  
+- Adds the specified upstream remote.  
+- Fetches and merges the latest commits from upstream.  
+- Pushes the updated branch back to the fork.
 
-Setup for a New Fork
+## Setup for a New Fork
 
-    Add this workflow
-    Place sync-upstream.yml at .github/workflows/sync-upstream.yml in your fork.
+1. **Add the workflow**  
+   Place `sync-upstream.yml` in your fork under `.github/workflows/`.
 
-    Customize the upstream
-    Edit the Add upstream remote step:
+2. **Customize the upstream**  
+   In the `Add upstream remote` step, update the URL to your upstream repo:
+   ```bash
+   git remote add upstream https://github.com/ORIGINAL-OWNER/ORIGINAL-REPO.git
+   ```
+   Replace `ORIGINAL-OWNER/ORIGINAL-REPO` with the repository you forked.
 
-    text
-    git remote add upstream https://github.com/ORIGINAL-OWNER/ORIGINAL-REPO.git
+3. **Ensure repository settings**  
+   - The repository must be public.  
+   - The workflow runs on your default branch (e.g., `main` or `master`).
 
-    Replace ORIGINAL-OWNER/ORIGINAL-REPO with the upstream repository you forked.
+## Triggering the Sync
 
-    Ensure Public & Default Branch
+- **Scheduled sync**: The workflow’s cron schedule runs daily at 05:00 UTC by default.
+- **Manual trigger**: Go to **Actions → Sync from upstream → Run workflow**.
 
-        The repository must be public.
+Example schedule in `sync-upstream.yml`:
+```yaml
+on:
+  schedule:
+    - cron: '0 5 * * *'   # daily at 05:00 UTC
+  workflow_dispatch:     # manual trigger
+```
 
-        The workflow uses your default branch (main/master).
+## Permissions
 
-Triggering the Sync
+Your workflow requires permission to push changes:
 
-    The central dispatcher (in .github) should be configured to send:
+```yaml
+permissions:
+  contents: write
+```
 
-text
-event-type: upstream-sync
+In **Settings → Actions → General**, ensure **Read and write permissions** is enabled. If it’s greyed out, ask an organization admin to grant write access.
 
-Manually trigger via Actions → Run workflow or set up a cron schedule in the dispatcher:
+## Tips
 
-    text
-    on:
-      schedule:
-        - cron: '0 5 * * *'  # daily at 05:00 UTC
-
-Permissions
-
-    Your workflow needs contents: write to push changes. Under Settings → Actions → General, select Read and write permissions for workflows. 
-    
-    If it’s greyed out, ask an org admin to enable that setting so your sync can push updates.
-
-Tips
-
-    Keep the upstream URL updated whenever you change the fork’s source.
-
-    Use your org’s .github repo to manage and update the central dispatcher—no need to touch individual forks after initial setup.
+- Always keep the upstream URL in the workflow updated if you ever change the fork’s source.  
+- Use your organization’s central `.github` repository to manage any shared or dispatch workflows—individual forks only need the listener workflow once.
