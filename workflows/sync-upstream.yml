@@ -3,7 +3,7 @@ name: 🔄 Sync from upstream
 on:
   schedule:
     - cron: '0 5 * * *'       # daily at 05:00 UTC
-  workflow_dispatch:         # manual trigger
+  workflow_dispatch:          # manual trigger
 
 permissions:
   contents: write             # allow pushing changes
@@ -15,7 +15,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0       # full history
+          fetch-depth: 0      # full history
 
       - name: Configure Git
         run: |
