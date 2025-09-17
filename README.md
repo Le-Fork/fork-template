@@ -51,7 +51,7 @@ Example schedule in `sync-upstream.yml`:
 on:
   schedule:
     - cron: '0 5 * * *'   # daily at 05:00 UTC
-  workflow_dispatch:     # manual trigger
+  workflow_dispatch:      # manual trigger
 ```
 
 ## Permissions
