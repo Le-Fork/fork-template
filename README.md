@@ -59,17 +59,24 @@ This repository provides a reusable GitHub Actions workflow that keeps a fork's 
 
 ## Organization Actions Settings
 
-To allow this workflow to run, your organization's Actions policy must permit the **actions/checkout@v4** action and first-party workflows:
+To allow this workflow to run, your organization's Actions policy must permit the necessary actions:
 
 1. Go to **Organization Settings → Actions → General → Policies**.  
 2. Select **Allow Le-Fork, and select non-Le-Fork, actions and reusable workflows**.  
    Note: you should change Le-Fork with your organization's name.
 3. Under **Allow actions created by GitHub**, ensure it is checked.  
 4. Under **Allow actions by Marketplace verified creators**, ensure it is checked.  
-5. In the **"Allow or block specified actions and reusable workflows"** textbox, list exactly:
+5. In the **"Allow or block specified actions and reusable workflows"** textbox, add:
    ```
-   actions/checkout@v4
+   actions/checkout@v4,
+   pre-commit/action@*
    ```
+   
+- `actions/checkout@v4`: Official GitHub action to check out your repository code
+- `pre-commit/action@*`: Third-party action that runs code linting and formatting. GitHub blocks third-party actions by default for security, so you must explicitly allow it. The `@*` allows any version of this action.
+
+Adjust the action versions and names based on what your upstream repository uses in its workflows.
+
 
 ## Triggering the Sync
 
